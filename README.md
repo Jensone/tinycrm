@@ -144,3 +144,5 @@ Role: Administrateur (ROLE_ADMIN)
 - En tant qu'administrateur, je veux pouvoir supprimer une offre.
 - En tant qu'administrateur, je veux pouvoir emettre une demande de paiement pour une offre.
 - En tant qu'administrateur, je veux pouvoir emettre une facture pour un prospect.
+
+---
