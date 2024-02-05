@@ -2,39 +2,46 @@
 
 namespace App\Controller;
 
-use App\Repository\ClientRepository;
-use App\Repository\OffreRepository;
-use App\Repository\TransactionRepository;
+use App\Form\PaymentType;
 use App\Service\StripeService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\OffreRepository;
+use App\Repository\ClientRepository;
+use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/payment')]
 class PaymentController extends AbstractController
 {
     #[Route('/', name: 'app_payment')]
     public function index(
+        Request $request,
         StripeService $stripeService,
         OffreRepository $offres,
         ClientRepository $clients,
         TransactionRepository $transactions
         ): Response
     {
-
-        $apiKey = $this->getParameter('STRIPE_API_KEY_SECRET'); // Clé API secrète
-        $offre = $offres->findOneBy(['id' => 25]); // Offre à vendre (titre et montant)
-        $clientEmail = $clients->findOneBy(['id' => 90])->getEmail();
-
-        $stripeService->makePayment(
-            $apiKey,
-            $offre->getMontant(),
-            $offre->getTitre(),
-            $clientEmail
-        );
+        $form = $this->createForm(PaymentType::class);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $offre = $offres->findOneBy(['id' => $data['offre']->getId()]); // Offre à vendre (titre et montant)
+            $clientEmail = $clients->findOneBy(['id' => $data['client']->getId()])->getEmail();
+            $apiKey = $this->getParameter('STRIPE_API_KEY_SECRET'); // Clé API secrète
+            $link = $stripeService->makePayment(
+                $apiKey,
+                $offre->getMontant(),
+                $offre->getTitre(),
+                $clientEmail
+            );
+            // Envoie du lien au client
+        }
 
         return $this->render('payment/index.html.twig', [
-            'controller_name' => 'PaymentController',
+            'form' => $form->createView(),
         ]);
     }
 
