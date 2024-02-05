@@ -8,7 +8,7 @@ use Stripe\Checkout\Session;
 class StripeService
 {
 
-    public function makePayment($apiKey, $amount, $product, $email)
+    public function makePayment(?string $apiKey, ?int $amount, ?string $product, ?string $email)
     {
         Stripe::setApiKey($apiKey);
         header('Content-Type: application/json');
@@ -17,11 +17,16 @@ class StripeService
 
         $checkout_session = Session::create([
             'customer_email' => $email,
-            'submit_type' => 'Payer',
+            'submit_type' => 'pay',
             'billing_address_collection' => 'required',
             'line_items' => [[
-                'name' => $product,
-                'price' => $amount,
+                'price_data' => [ // Section des données de produit
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => $product, // Nom de l'offre
+                    ],
+                    'unit_amount' => $amount * 100, // Montant en centimes
+                ],
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
