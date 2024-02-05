@@ -13,7 +13,7 @@ class StripeService
         Stripe::setApiKey($apiKey);
         header('Content-Type: application/json');
 
-        $YOUR_DOMAIN = 'https://127.0.0.1:8000';
+        $YOUR_DOMAIN = 'https://tinycrm.test';
 
         $checkout_session = Session::create([
             'customer_email' => $email,
@@ -32,12 +32,12 @@ class StripeService
             'mode' => 'payment',
             'success_url' => $YOUR_DOMAIN . '/payment/success',
             'cancel_url' => $YOUR_DOMAIN . '/payment/cancel',
-            'automatic_tax' => [
-                'enabled' => true,
-            ],
+            // 'automatic_tax' => [
+            //     'enabled' => true,
+            // ],
         ]);
 
         header("HTTP/1.1 303 See Other");
-        header("Location: " . $checkout_session->url);
+        return $checkout_session->url; // On récupère le lien de paiement
     }
 }
