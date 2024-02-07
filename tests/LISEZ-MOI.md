@@ -6,6 +6,8 @@ Tout est dans la documentation :
 
 ## Initialisez la base de données de test
 
+Tout d'abord renseignez la variable d'environnement `DATABASE_URL` dans le fichier `.env.test.local` pour la base de données de test et ajoutez le suffixe `-test` au nom de la base de données.
+
 ```bash
 symfony console doctrine:database:create --env=test
 symfony console doctrine:schema:create --env=test
