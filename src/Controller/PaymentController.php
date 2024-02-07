@@ -61,6 +61,7 @@ class PaymentController extends AbstractController
 
             $transaction = new Transaction();
             $transaction->setClient($data['client'])
+                        ->addOffre($offre)
                         ->setMontant($offre->getMontant())
                         ->setStatut('En attente');
             $em->persist($transaction); // EntityMangerInterface
@@ -73,8 +74,14 @@ class PaymentController extends AbstractController
     }
 
     #[Route('/success', name: 'payment_success')]
-    public function success(): Response
+    public function success(
+        TransactionRepository $transactions,
+        EntityManagerInterface $em
+    ): Response
     {
+        // Get transaction details from Stripe (Webhook)
+        // Update transaction status
+
         return $this->render('payment/success.html.twig', [
             'controller_name' => 'PaymentController',
         ]);
