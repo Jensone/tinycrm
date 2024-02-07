@@ -2,8 +2,6 @@
 
 namespace App\Tests;
 
-use App\Repository\ClientRepository;
-use App\Repository\OffreRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
